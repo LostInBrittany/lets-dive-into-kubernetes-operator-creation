@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: random-gopher
+spec:
+  selector:
+    matchLabels:
+      run: random-gopher
+  replicas: 10
+  template:
+    metadata:
+      labels:
+        run: random-gopher
+    spec:
+      containers:
+      - name: random-gopher
+        image: lostinbrittany/random-gopher:0.0.3
+        ports:
+        - containerPort: 8080        

@@ -1,0 +1,15 @@
+{
+    "name": "@lostinbrittany/random-gopher",
+    "version": "1.0.0",
+    "description": "A workload exposing a single random gopher from scraly's repository https://github.com/scraly/gophers",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js"
+    },
+    "type": "module",
+    "author": "Horacio Gonzalez <horacio.gonzalez@gmail.com>",
+    "license": "MIT",
+    "dependencies": {
+        "express": "^4.18.2"
+    }
+}
