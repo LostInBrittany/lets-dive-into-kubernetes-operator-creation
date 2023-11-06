@@ -1,0 +1,179 @@
+consumes:
+- application/json
+info:
+  description: HTTP server that handle cute Gophers.
+  title: gophers-api
+  version: 0.1.0
+produces:
+- application/json
+host: localhost:8080
+schemes:
+- http
+swagger: "2.0"
+tags:
+  - name: gophers
+    description: Handle Gophers
+
+paths:
+  /health:
+    get:
+      description: Check Health
+      tags:
+        - gophers
+      operationId: checkHealth
+      produces:
+      - text/plain
+      responses:
+        '200':
+          description: OK message.
+          headers:
+            Access-Control-Allow-Origin:
+              type: string
+          schema:
+            type: string
+            enum:
+            - OK
+  /gophers:
+    get:
+      description: List Gophers
+      tags:
+        - gophers
+      produces:
+       - application/json
+      responses:
+        200:
+          description: Return the Gophers list.
+          headers:
+            Access-Control-Allow-Origin:
+              type: string
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Gopher'
+
+
+  /gopher:
+    post:
+      summary: Add a new Gopher
+      tags:
+        - gophers
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: gopher
+          description: The Gopher to create.
+          schema:
+            type: object
+            required:
+              - id
+              - name
+              - displayname
+              - url
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              displayname:
+                type: string
+              url:
+                type: string
+      responses:
+        201:
+          description: Created
+          schema:
+            type: object
+            $ref: '#/definitions/Gopher'
+        409:
+          description: Gopher already exists
+    get:
+      description: Get a gopher by a given id
+      tags:
+        - gophers
+      produces:
+       - application/json
+      parameters:
+        - name: id
+          in: query
+          type: string
+          required: true
+          description: Gopher id
+      responses:
+        200:
+          description: A gopher
+          headers:
+            Access-Control-Allow-Origin:
+              type: string
+          schema:
+            type: object
+            $ref: '#/definitions/Gopher'
+        404:
+          description: A gopher with the specified Id was not found.
+          headers:
+            Access-Control-Allow-Origin:
+              type: string
+    delete:
+      description: Delete a gopher by a given id
+      tags:
+        - gophers
+      parameters:
+        - name: id
+          in: query
+          type: string
+          required: true
+          description: Gopher id
+      responses:
+        200:
+          description: OK
+        404:
+          description: A gopher with the specified id was not found.
+    put:
+      description: Update a gopher
+      tags:
+        - gophers
+      parameters:
+        - in: body
+          name: gopher
+          description: The Gopher to update.
+          schema:
+            type: object
+            required:
+              - id
+              - name
+              - displayname
+              - url
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              displayname:
+                type: string
+              url:
+                type: string
+      responses:
+        200:
+          description: Updated
+          schema:
+            type: object
+            $ref: '#/definitions/Gopher'
+        404:
+          description: A gopher with the specified id was not found.
+
+definitions:
+  Gopher:
+    type: object
+    properties:
+      id:
+        type: string
+        example: gopher-1234
+      name:
+        type: string
+        example: my-gopher
+      displayname:
+        type: string
+        example: My Gopher
+      url:
+        type: string
+        example: https://raw.githubusercontent.com/scraly/gophers/main/arrow-gopher.png
