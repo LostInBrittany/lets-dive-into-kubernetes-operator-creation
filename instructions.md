@@ -16,3 +16,16 @@ kubectl get pods -o wide
 wget -qO - <i>:8080/gopher/name
 ```
 
+
+
+
+### Gopher example
+
+```json
+{
+  "id": "gopher-1234",
+  "name": "5th-element",
+  "displayname": "5th Element",
+  "url": "https://github.com/scraly/gophers/blob/main/5th-element.png?raw=true"
+}
+```

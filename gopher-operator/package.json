@@ -1,0 +1,56 @@
+{
+  "name": "@lostinbrittany/gopher-operator",
+  "version": "1.0.0",
+  "description": "A simple Kubernetes operator to deal with gophers",
+  "author": {
+    "name": "Horacio Gonzalez",
+    "email": "horacio.gonzalez@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lostinbrittany/lets-dive-into-kubernetes-operator-creation/"
+  },
+  "files": [
+    "dist/*.ts",
+    "dist/*.js",
+    "*.md"
+  ],
+  "license": "Apache-2.0",
+  "main": "dist/index.js",
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "engines": {
+    "node": ">=16"
+  },
+  "dependencies": {
+    "@kubernetes/client-node": "^0.19.0",
+    "async": "^3.2.4",
+    "gaxios": "^6.1.1",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "@types/async": "^3.2.22",
+    "@types/byline": "^4.2.35",
+    "@types/js-yaml": "^4.0.8",
+    "@types/node": "=16.11.7",
+    "@types/ws": "^8.5.8",
+    "@typescript-eslint/eslint-plugin": "^6.9.1",
+    "@typescript-eslint/parser": "^6.9.1",
+    "eslint": "^8.52.0",
+    "mkdirp": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  },
+  "scripts": {
+    "lint": "eslint ./src --ext .ts,.tsx",
+    "clean": "rm -Rf node_modules/ dist/",
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "prepare": "rm -Rf dist/ && npm run build"
+  },
+  "keywords": [
+    "kubernetes",
+    "k8s",
+    "operator"
+  ]
+}
