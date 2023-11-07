@@ -4,13 +4,31 @@ import swaggerUi from 'swagger-ui-express';
 import fs from 'node:fs';
 import yaml from 'yaml';
 
+
+
 const gophers=[];
 const file  = fs.readFileSync('./swagger/swagger.yml', 'utf8')
 const swaggerDocument = yaml.parse(file)
 
-function getGopher(id) {
-    let gopher = gophers.find((item) => item.id == id);
+const genAPIKey = () => {
+    //create a base-36 string that contains 30 chars in a-z,0-9
+    return [...Array(30)]
+      .map((e) => ((Math.random() * 36) | 0).toString(36))
+      .join('');
+  };
+
+const authenticateKey = (req, res, next) => {
+    let receivedApiKey = req.header("x-api-key"); 
+    if (!receivedApiKey || receivedApiKey != apiKey) {
+        //Reject request if API key doesn't match
+        res.status(403).send({ error: { code: 403, message: "You not allowed." } });
+        return;
+    }
+    next();
 }
+
+const apiKey = genAPIKey();
+console.log('API key', apiKey);
 
 let app = express();
 
@@ -29,7 +47,7 @@ app.get('/gophers', (req, resp) => {
     resp.send(gophers);
 });
 
-app.post('/gopher', (req, resp) => {
+app.post('/gopher', authenticateKey, (req, resp) => {
 
     let gopher = req.body;
 
@@ -62,7 +80,7 @@ app.get('/gopher', (req, resp) => {
     resp.send(gopher);  
 });
 
-app.delete('/gopher', (req, resp) => {
+app.delete('/gopher', authenticateKey, (req, resp) => {
 
     let gopherIndex = gophers.findIndex((item) => item.id == req.query['id']);
 
@@ -76,7 +94,7 @@ app.delete('/gopher', (req, resp) => {
     resp.send('OK');  
 });
 
-app.put('/gopher', (req, resp) => {
+app.put('/gopher', authenticateKey, (req, resp) => {
 
 
     let gopher = req.body;

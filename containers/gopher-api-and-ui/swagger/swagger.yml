@@ -60,6 +60,12 @@ paths:
       consumes:
         - application/json
       parameters:
+        - in: header
+          name: x-api-key
+          schema:
+            type: string
+            format: uuid
+          required: true      
         - in: body
           name: gopher
           description: The Gopher to create.
@@ -118,6 +124,12 @@ paths:
       tags:
         - gophers
       parameters:
+        - in: header
+          name: x-api-key
+          schema:
+            type: string
+            format: uuid
+          required: true  
         - name: id
           in: query
           type: string
@@ -133,6 +145,12 @@ paths:
       tags:
         - gophers
       parameters:
+        - in: header
+          name: x-api-key
+          schema:
+            type: string
+            format: uuid
+          required: true  
         - in: body
           name: gopher
           description: The Gopher to update.
