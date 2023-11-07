@@ -17,6 +17,8 @@ let app = express();
 app.use(express.json()) // for parsing application/json
 app.use(cors());
 
+app.use('/web', express.static('web'));
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.get('/health', (req, resp) => {
@@ -98,6 +100,7 @@ app.put('/gopher', (req, resp) => {
     gophers[gopherIndex] = gopher;
     resp.send(gopher);
 });
+
 
 let server = app.listen(process.env.PORT || 8080, async function () {
     let host = server.address().address;
