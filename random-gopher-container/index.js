@@ -30,7 +30,7 @@ function sendGopher(req,res) {
 app.get('/', sendGopher);
 app.get('/gopher', sendGopher);
 
-app.get('/gopher/name', (req, res) => res.send(chosenGopher.split('.')[0]));
+app.get('/gopher/name', (req, res) => res.send(chosenGopher));
 
 
 let server = app.listen(process.env.PORT || 8080, async function () {

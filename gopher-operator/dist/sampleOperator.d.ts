@@ -13,8 +13,6 @@ export interface GopherApiSpec {
     endpoint: string;
     apiKey: string;
 }
-export default class GopherOperator extends Operator {
+export default class MyOperator extends Operator {
     protected init(): Promise<void>;
-    getGopherInfo(pod: string, namespace: string | any): Promise<Gopher>;
-    sendGopher(gopher: Gopher, method: string, api: GopherApiSpec): Promise<void>;
 }

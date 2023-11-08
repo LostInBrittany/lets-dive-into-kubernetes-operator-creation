@@ -1,3 +1,11 @@
+### Building the container
+
+```sh
+podman build -t lostinbrittany/random-gopher:0.0.4
+podman login
+podman push lostinbrittany/random-gopher:0.0.4
+```
+
 ### Create a busybox
 
 ```sh

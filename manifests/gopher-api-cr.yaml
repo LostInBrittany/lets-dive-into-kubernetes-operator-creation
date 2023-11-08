@@ -1,0 +1,7 @@
+apiVersion: "lostinbrittany.dev/v1alpha1"
+kind: GopherAPI
+metadata:
+  name: my-gopher-api
+spec:
+  endpoint: http://62.210.122.195:8080
+  apiKey: coo31h0va9e0j5is2p3p82xxugfomc
