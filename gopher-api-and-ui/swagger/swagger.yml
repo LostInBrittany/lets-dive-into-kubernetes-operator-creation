@@ -49,6 +49,13 @@ paths:
             type: array
             items:
               $ref: '#/definitions/Gopher'
+    delete:
+      description: Deletes all gophers
+      tags:
+        - gophers
+      responses:
+        200:
+          description: OK
 
 
   /gopher:

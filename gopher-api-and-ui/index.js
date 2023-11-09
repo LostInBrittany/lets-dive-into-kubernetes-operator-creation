@@ -47,6 +47,10 @@ app.get('/gophers', (req, resp) => {
     resp.send(gophers);
 });
 
+app.delete('/gophers',  authenticateKey, (req, resp) => {
+    gophers = [];
+})
+
 app.post('/gopher', authenticateKey, (req, resp) => {
 
     let gopher = req.body;
