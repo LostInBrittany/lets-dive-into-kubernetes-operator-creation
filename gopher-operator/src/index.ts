@@ -2,7 +2,7 @@ import Operator, { ResourceEventType }  from './operator.js';
 import { KubernetesObject } from '@kubernetes/client-node';
 import fetch from 'node-fetch';
 import https from 'node:https';
-import { Url } from 'node:url';
+import fs from 'node:fs';
 
 export interface Gopher {
     id: string,
@@ -115,10 +115,27 @@ export default class GopherOperator extends Operator {
             }
         });
     }
+    getServiceAccountToken(): string {
+        let currentUser = this.kubeConfig.getCurrentUser();
+        if (!currentUser || currentUser.name != 'inClusterUser') {
+            return '';
+        }
+        let tokenFile = currentUser.authProvider?.config.tokenFile;
+        return fs.readFileSync(tokenFile).toString();
+        
+
+    }
     async getGopherInfo(pod: string, namespace:string|any): Promise<Gopher> {
         // Preparing the credentials for K8s API
         const opts:https.RequestOptions = {};
         this.kubeConfig.applyToHTTPSOptions(opts);
+
+        let headers:any = {};
+        let bearerToken = this.getServiceAccountToken();
+        if (bearerToken) {
+            headers['Authorization']= `Bearer ${bearerToken}`;
+        };
+
         const agent = new https.Agent({ 
             ca:opts.ca,
             cert: opts.cert,
@@ -129,7 +146,8 @@ export default class GopherOperator extends Operator {
         try {
             let response = await fetch(`${this.kubeConfig.getCurrentCluster()?.server}/api/v1/namespaces/${
                 namespace}/pods/${pod}/proxy/gopher/name`,
-                { agent: agent }
+                { agent: agent,
+                  headers: headers}
             );
             gopherName = await response.text();
 

@@ -33,5 +33,16 @@ $  npm run start
 
 API key 8buffsrl370w85xdm5evea029i7osv
 Listening at http://:::8080
-
 ```
+
+## Manifests
+
+In the [`/manifests`](./manifests/) folder there are several Kubernetes manifests:
+
+- `random-gopher-deployment.yaml`: a manifest that deploys several replicas of `random-gopher-container`, each one exposing a random gopher.
+
+- `gopher-api-crd.yaml`: a custom resource definition (CRD) to describe the Gopher API from the Kubernetes point of view, basically a `endpoint` and an `apiKey` properties.
+
+- `gopher-api-cr.yaml`: an instance of the Gopher API CRD, with the definition of the currently configured Gopher API.
+
+- `gopher-operator-rbac.yaml`: a manifest defining a Service Account and the RBAC needed to deploy and use the operator in the cluster.

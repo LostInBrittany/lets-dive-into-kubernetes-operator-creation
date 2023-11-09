@@ -1,6 +1,7 @@
 import Operator, { ResourceEventType } from './operator.js';
 import fetch from 'node-fetch';
 import https from 'node:https';
+import fs from 'node:fs';
 let api;
 export default class GopherOperator extends Operator {
     async init() {
@@ -89,11 +90,26 @@ export default class GopherOperator extends Operator {
             }
         });
     }
+    getServiceAccountToken() {
+        var _a;
+        let currentUser = this.kubeConfig.getCurrentUser();
+        if (!currentUser || currentUser.name != 'inClusterUser') {
+            return '';
+        }
+        let tokenFile = (_a = currentUser.authProvider) === null || _a === void 0 ? void 0 : _a.config.tokenFile;
+        return fs.readFileSync(tokenFile).toString();
+    }
     async getGopherInfo(pod, namespace) {
         var _a;
         // Preparing the credentials for K8s API
         const opts = {};
         this.kubeConfig.applyToHTTPSOptions(opts);
+        let headers = {};
+        let bearerToken = this.getServiceAccountToken();
+        if (bearerToken) {
+            headers['Authorization'] = `Bearer ${bearerToken}`;
+        }
+        ;
         const agent = new https.Agent({
             ca: opts.ca,
             cert: opts.cert,
@@ -102,7 +118,8 @@ export default class GopherOperator extends Operator {
         let gopherName;
         // Recovering the Gopher
         try {
-            let response = await fetch(`${(_a = this.kubeConfig.getCurrentCluster()) === null || _a === void 0 ? void 0 : _a.server}/api/v1/namespaces/${namespace}/pods/${pod}/proxy/gopher/name`, { agent: agent });
+            let response = await fetch(`${(_a = this.kubeConfig.getCurrentCluster()) === null || _a === void 0 ? void 0 : _a.server}/api/v1/namespaces/${namespace}/pods/${pod}/proxy/gopher/name`, { agent: agent,
+                headers: headers });
             gopherName = await response.text();
         }
         catch (error) {

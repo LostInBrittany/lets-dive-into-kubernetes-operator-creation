@@ -15,6 +15,7 @@ export interface GopherApiSpec {
 }
 export default class GopherOperator extends Operator {
     protected init(): Promise<void>;
+    getServiceAccountToken(): string;
     getGopherInfo(pod: string, namespace: string | any): Promise<Gopher>;
     sendGopher(gopher: Gopher, method: string, api: GopherApiSpec): Promise<void>;
 }

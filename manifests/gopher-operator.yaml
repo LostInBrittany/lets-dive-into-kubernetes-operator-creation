@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gopher-operator
+  namespace: default
+  labels:
+    app: gopher-operator
+spec:
+  selector:
+    matchLabels:
+      app: gopher-operator
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: gopher-operator
+    spec:
+      serviceAccountName: gopher-operator-service-account
+      containers:
+      - name:  gopher-operator
+        image: lostinbrittany/gopher-operator:0.0.5
+      restartPolicy: Always
