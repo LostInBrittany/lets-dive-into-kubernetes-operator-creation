@@ -49,6 +49,7 @@ app.get('/gophers', (req, resp) => {
 
 app.delete('/gophers',  authenticateKey, (req, resp) => {
     gophers.splice(0);
+    resp.send('OK');  
 })
 
 app.post('/gopher', authenticateKey, (req, resp) => {
