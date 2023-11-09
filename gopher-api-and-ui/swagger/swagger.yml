@@ -53,6 +53,12 @@ paths:
       description: Deletes all gophers
       tags:
         - gophers
+      parameters:
+        - in: header
+          name: x-api-key
+          schema:
+            type: string
+          required: true  
       responses:
         200:
           description: OK
@@ -70,7 +76,6 @@ paths:
           name: x-api-key
           schema:
             type: string
-            format: uuid
           required: true      
         - in: body
           name: gopher
@@ -134,7 +139,6 @@ paths:
           name: x-api-key
           schema:
             type: string
-            format: uuid
           required: true  
         - name: id
           in: query
@@ -155,7 +159,6 @@ paths:
           name: x-api-key
           schema:
             type: string
-            format: uuid
           required: true  
         - in: body
           name: gopher
