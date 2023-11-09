@@ -6,26 +6,36 @@ podman login
 podman push lostinbrittany/random-gopher:0.0.4
 ```
 
+
+## Deploying `random-gopher-deployment`
+
+### Deploying the manifest
+
+```sh
+kubectl apply -f manifests random-gopher-deployment.yaml
+```
+
+### Getting pods' adress
+
+```sh
+kubectl get pods -o wide
+```
+
 ### Create a busybox
 
 ```sh
 kubectl run -i --tty --rm debug --image=busybox --restart=Never -- sh
 ```
 
-### Getting pod adresses
-
-```sh
-kubectl get pods -o wide
-```
-
 ### Asking for a Gopher name
 
 ```sh
-wget -qO - <i>:8080/gopher/name
+wget -qO - [pod_ip]:8080/gopher/name
 ```
 
+---
 
-
+## Gopher API and UI
 
 ### Gopher example
 
@@ -37,3 +47,6 @@ wget -qO - <i>:8080/gopher/name
   "url": "https://github.com/scraly/gophers/blob/main/5th-element.png?raw=true"
 }
 ```
+
+---
+
