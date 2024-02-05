@@ -21,7 +21,7 @@ const authenticateKey = (req, res, next) => {
     let receivedApiKey = req.header("x-api-key"); 
     if (!receivedApiKey || receivedApiKey != apiKey) {
         //Reject request if API key doesn't match
-        res.status(403).send({ error: { code: 403, message: "You not allowed." } });
+        res.status(403).statusMessage("You not allowed");
         return;
     }
     next();
@@ -61,12 +61,12 @@ app.post('/gopher', authenticateKey, (req, resp) => {
         !gopher.name || 
         !gopher.displayname || 
         !gopher.url) {
-            resp.status(400).send('Received no Gopher object in request body');
+            resp.status(400).statusMessage('Received no Gopher object in request body');
             return;
     }
 
     if (gophers.find((item) => item.id == req.body['id'])) {
-        resp.status(409).send('Gopher already exists');
+        resp.status(409).statusMessage('Gopher already exists');
         return;
     }
 
@@ -79,7 +79,7 @@ app.get('/gopher', (req, resp) => {
     let gopher = gophers.find((item) => item.id == req.query['id']);
 
     if (!gopher) {
-        resp.status(404).send(`A gopher with the specified id was not found.`);
+        resp.status(404).statusMessage(`A gopher with the specified id was not found.`);
         return;
     } 
     resp.send(gopher);  
@@ -92,7 +92,7 @@ app.delete('/gopher', authenticateKey, (req, resp) => {
     console.log(gopherIndex);
     
     if (gopherIndex < 0) {
-        resp.status(404).send(`A gopher with the specified id was not found.`);
+        resp.status(404).statusMessage(`A gopher with the specified id was not found.`);
         return;
     } 
     gophers.splice(gopherIndex, 1);
@@ -109,14 +109,14 @@ app.put('/gopher', authenticateKey, (req, resp) => {
         !gopher.name || 
         !gopher.displayname || 
         !gopher.url) {
-            resp.status(400).send('Received no Gopher object in request body');
+            resp.status(400).statusMessage('Received no Gopher object in request body');
             return;
     }
 
     let gopherIndex = gophers.findIndex((item) => item.id == req.body['id']);
 
     if ( gopherIndex < 0) {
-        resp.status(404).send('A gopher with the specified id was not found.');
+        resp.status(404).statusMessage('A gopher with the specified id was not found.');
         return;
     }
     

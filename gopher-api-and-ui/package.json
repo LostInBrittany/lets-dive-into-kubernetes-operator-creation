@@ -1,10 +1,13 @@
 {
     "name": "@lostinbrittany/gopher-api-and-ui",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "A small server inspired from https://github.com/scraly/gophers-api",
     "main": "index.js",
     "scripts": {
         "start": "node index.js"
+    },
+    "engines" : {
+      "node" : "^21"
     },
     "type": "module",
     "author": "Horacio Gonzalez <horacio.gonzalez@gmail.com>",
