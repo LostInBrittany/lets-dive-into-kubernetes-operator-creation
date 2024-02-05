@@ -88,8 +88,6 @@ app.get('/gopher', (req, resp) => {
 app.delete('/gopher', authenticateKey, (req, resp) => {
 
     let gopherIndex = gophers.findIndex((item) => item.id == req.query['id']);
-
-    console.log(gopherIndex);
     
     if (gopherIndex < 0) {
         resp.status(404).send(`A gopher with the specified id was not found.`);
