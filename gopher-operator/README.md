@@ -7,6 +7,9 @@
 ### Operator that watches pods
 
 ```typescript
+
+Operator that watches pods
+*/
 import Operator, { ResourceEventType, ResourceEvent }  from './operator.js';
 
 export default class GopherOperator extends Operator {
@@ -17,13 +20,13 @@ export default class GopherOperator extends Operator {
 
             switch (e.type) {
                 case ResourceEventType.Added:
-                    // do something useful here
+                    console.log("Pod added, name", metadata?.name);
                     break;
                 case ResourceEventType.Modified:
-                    // do something useful here
+                    console.log("Pod modified, name", metadata?.name);
                     break;
                 case ResourceEventType.Deleted:
-                    // do something useful here
+                    console.log("Pod deleted, name", metadata?.name);
                     break;
             }
         });
@@ -33,8 +36,11 @@ export default class GopherOperator extends Operator {
 const operator = new GopherOperator();
 await operator.start();
 
+console.log("Operator started")
+
 const exit = (reason: string) => {
     operator.stop();
+    console.log("Operator stopped")
     process.exit(0);
 };
 
@@ -117,11 +123,13 @@ export default class GopherOperator extends Operator {
             let gopher:string;
             // Recovering the Gopher
             try {
+                console.log(`Asking info about pod ${metadata?.name}`)
                 let response = await fetch(`${this.kubeConfig.getCurrentCluster()?.server}/api/v1/namespaces/${
                     metadata?.namespace}/pods/${metadata?.name}/proxy/gopher/name`,
                     { agent: agent }
                 );
                 gopher = await response.text();
+                console.log(`Pod ${metadata?.name} is gopher ${gopher}`)
 
             } catch(error) {
                 console.log(error);
@@ -129,18 +137,13 @@ export default class GopherOperator extends Operator {
               
             switch (e.type) {
                 case ResourceEventType.Added:
-                    console.log('random-gopher pod added', metadata?.name);
-
-
-
+                    // console.log('random-gopher pod added', metadata?.name);
                     break;
                 case ResourceEventType.Modified:
-                    console.log('random-gopher pod modified', metadata?.name);
-
+                    // console.log('random-gopher pod modified', metadata?.name);
                     break;
                 case ResourceEventType.Deleted:
-                    console.log('random-gopher pod deleted', metadata?.name);
-
+                    // console.log('random-gopher pod deleted', metadata?.name);
                     break;
             }
         });
@@ -161,6 +164,12 @@ process.on('SIGTERM', () => exit('SIGTERM'))
 
 #### Operator who monitors GopherAPI Objects
 
+
+Before running this operator, we need to deploy in the cluster 
+the CRD for the Gopher API (`/manifests/gopher-api-crd.yaml`).
+
+Then we can deploy Gopher API CRs (like the one in `/manifests/gopher-api-cr.yaml`).
+
 ```typescript
 import Operator, { ResourceEventType }  from './operator.js';
 import { KubernetesObject } from '@kubernetes/client-node';
@@ -177,41 +186,38 @@ export interface GopherApiSpec {
     apiKey: string;
 }
 
-let api:GopherApiSpec;
+let apiSpec:GopherApiSpec;
 
 export default class GopherOperator extends Operator {
     protected async init() {
+
+
         await this.watchResource('', 'v1', 'pods', async (e) => {});
-
-        await this.watchResource('lostinbrittany.dev', 'v1alpha1', 'GopherAPI', async (e) => {
+        
+        await this.watchResource('lostinbrittany.dev', 'v1alpha1', 'gopherapis', async (e) => {
             const object = e.object as GopherApi;
-
+            apiSpec = {
+                endpoint: object.spec.endpoint,
+                apiKey: object.spec.apiKey
+            }
             switch (e.type) {
                 case ResourceEventType.Added:
-                    api = {
-                        endpoint: object.spec.endpoint,
-                        apiKey: object.spec.apiKey
-                    }
+                    console.log(`Added Gopher API:`, apiSpec);
                     break;
                 case ResourceEventType.Modified:
-                    api = {
-                        endpoint: object.spec.endpoint,
-                        apiKey: object.spec.apiKey
-                    }
+                    console.log(`Modified Gopher API`, apiSpec);
                     break;
                 case ResourceEventType.Deleted:
-                    api = {
-                        endpoint: '',
-                        apiKey: ''
-                    }
+                    console.log(`Deleted Gopher API`, apiSpec);
                     break;
             }
         });
     }
 }
 
-const operator = new GopherOperator();
+const operator = new GopherOperator(console);
 await operator.start();
+console.log(`Operator started`);
 
 const exit = (reason: string) => {
     operator.stop();
