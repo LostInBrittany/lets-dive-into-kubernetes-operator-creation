@@ -4,7 +4,11 @@ This repository stores all the code for my talk *Let's dive into Kubernetes oper
 
 - 2023-11-09 - [DevOps Barcelona](https://devops.barcelona/) - [Slides](https://noti.st/lostinbrittany/vzc0uy/lets-dive-into-kubernetes-operator-creation)
 
-![Let's dive into Kubernetes operator creation](./img/cover-slide.jpg)
+    ![Let's dive into Kubernetes operator creation](./img/2023-11-09-DevOpsBcn.jpg)
+
+- 2024-02-06 - [Config Management Camp](https://cfgmgmtcamp.eu/ghent2024/) - [Slides](https://noti.st/lostinbrittany/vzc0uy/lets-dive-into-kubernetes-operator-creation)
+
+    ![Let's dive into Kubernetes operator creation](./img/2024-02-06-CfgMgmtCamp.jpg)
 
 ## Random Gopher container
 
