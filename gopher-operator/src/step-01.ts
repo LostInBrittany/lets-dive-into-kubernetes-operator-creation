@@ -4,6 +4,9 @@
 Operator that watches pods
 */
 import Operator, { ResourceEventType, ResourceEvent }  from './operator.js';
+import fetch from 'node-fetch';
+import https from 'node:https';
+import fs from 'node:fs';
 
 export default class GopherOperator extends Operator {
     protected async init() {

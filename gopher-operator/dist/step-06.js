@@ -1,3 +1,8 @@
+/*
+#### Step 06
+
+Making it deployable in the cluster
+*/
 import Operator, { ResourceEventType } from './operator.js';
 import fetch from 'node-fetch';
 import https from 'node:https';
@@ -212,4 +217,4 @@ const exit = (reason) => {
 };
 process.on('SIGTERM', () => exit('SIGTERM'))
     .on('SIGINT', () => exit('SIGINT'));
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=step-06.js.map

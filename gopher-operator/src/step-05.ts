@@ -7,7 +7,7 @@ import Operator, { ResourceEventType }  from './operator.js';
 import { KubernetesObject } from '@kubernetes/client-node';
 import fetch from 'node-fetch';
 import https from 'node:https';
-import { Url } from 'node:url';
+import fs from 'node:fs';
 
 export interface Gopher {
     id: string,

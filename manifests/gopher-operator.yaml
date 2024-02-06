@@ -18,5 +18,5 @@ spec:
       serviceAccountName: gopher-operator-service-account
       containers:
       - name:  gopher-operator
-        image: lostinbrittany/gopher-operator:0.0.5
+        image: lostinbrittany/gopher-operator:0.0.6
       restartPolicy: Always

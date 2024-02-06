@@ -255,41 +255,27 @@ export interface GopherApiSpec {
 }
 
 
-let api:GopherApiSpec;
+let apiSpec:GopherApiSpec;
 
 export default class GopherOperator extends Operator {
     protected async init() {
         console.log('Running operator');
         await this.watchResource('lostinbrittany.dev', 'v1alpha1', 'gopherapis', async (e) => {
             const object = e.object as GopherApi;
-
-            switch (e.type) {
-                case ResourceEventType.Added:
-                    api = {
-                        endpoint: object.spec.endpoint,
-                        apiKey: object.spec.apiKey
-                    }
-                    break;
-                case ResourceEventType.Modified:
-                    api = {
-                        endpoint: object.spec.endpoint,
-                        apiKey: object.spec.apiKey
-                    }
-                    break;
-                case ResourceEventType.Deleted:
-                    api = {
-                        endpoint: '',
-                        apiKey: ''
-                    }
-                    break;
+            apiSpec = {
+                endpoint: object.spec.endpoint,
+                apiKey: object.spec.apiKey
             }
+            console.log('Current GopherAPI', JSON.stringify(apiSpec));
+            try {
+                await this.deleteAllGophers(apiSpec);
+            } catch(error) {
 
-            console.log('Current GopherAPI', JSON.stringify(api));
+            }
         });
 
 
         await this.watchResource('', 'v1', 'pods', async (e) => {
-            console.log('Watching pods');
             const object = e.object;
             const metadata = object.metadata;
 
@@ -298,24 +284,27 @@ export default class GopherOperator extends Operator {
                 return;
             }
 
+            console.log('------------------------------------------------------------');
+            console.log(`Received pod event - ${e.type}`);
             let gopher:Gopher;
 
-            try {
-                 gopher = await this.getGopherInfo(metadata.name, 
-                    metadata?.namespace);
-            } catch(error) {
-                console.error(error);
-                return;
-            }
 
-              
             switch (e.type) {
                 case ResourceEventType.Added:
                     console.log('random-gopher pod added', metadata?.name);
                     // If GopherAPI is defined, send data to the API
-                    if (api.endpoint.length>0) {
+                    if (apiSpec.endpoint.length>0) {
                         try {
-                            this.sendGopher(gopher,'POST',api);
+                            try {
+                                gopher = await this.getGopherInfo(metadata.name, 
+                                   metadata?.namespace);
+               
+                               console.log('Get Gopher info', gopher);
+                           } catch(error) {
+                               console.error('Unable to get Gopher info', error);
+                               return;
+                           }
+                            await this.sendGopher(gopher,'POST',apiSpec);
                         } catch(error) {
                             console.error(error);
                             return;
@@ -325,10 +314,20 @@ export default class GopherOperator extends Operator {
                 case ResourceEventType.Modified:
                     console.log('random-gopher pod modified', metadata?.name);
                     // If GopherAPI is defined, send data to the API
-                    if (api.endpoint.length>0) {
+                    if (apiSpec.endpoint.length>0) {
                         try {
-                            this.sendGopher(gopher,'PUT',api);
+                            try {
+                                gopher = await this.getGopherInfo(metadata.name, 
+                                   metadata?.namespace);
+               
+                               console.log('Get Gopher info', gopher);
+                           } catch(error) {
+                               console.error('Unable to get Gopher info', error);
+                               return;
+                           }
+                            await this.sendGopher(gopher,'PUT',apiSpec);
                         } catch(error) {
+                            console.log('REFUCK')
                             console.error(error);
                             return;
                         }
@@ -337,9 +336,9 @@ export default class GopherOperator extends Operator {
                 case ResourceEventType.Deleted:
                     console.log('random-gopher pod deleted', metadata?.name);
                     // If GopherAPI is defined, send data to the API
-                    if (api.endpoint.length>0) {
+                    if (apiSpec.endpoint.length>0) {
                         try {
-                            this.sendGopher(gopher,'DELETE',api);
+                            await this.deleteGopher(metadata.name,apiSpec);
                         } catch(error) {
                             console.error(error);
                             return;
@@ -365,6 +364,10 @@ export default class GopherOperator extends Operator {
                 namespace}/pods/${pod}/proxy/gopher/name`,
                 { agent: agent }
             );
+            if (response.status != 200) {
+                let message = await(response.text())
+                throw `${response.status} - ${message}`;
+            }
             gopherName = await response.text();
 
         } catch(error) {
@@ -380,7 +383,54 @@ export default class GopherOperator extends Operator {
         console.log('Gopher', JSON.stringify(gopher));
         return gopher;
     }
+
+    async deleteAllGophers(api: GopherApiSpec){
+        console.log(`Deleting all gophers`);
+
+        try {
+            let response = await fetch(`${api.endpoint}/gophers`, {
+                method: 'DELETE',
+                headers: {
+                    'x-api-key': api.apiKey,
+                    'Content-Type': 'application/json'
+                },
+            });
+            if (response.status != 200) {
+                let message = await(response.text())
+                throw `${response.status} - ${message}`;
+            }
+            let responseJSON = await response.json();
+            console.log('API response', response.status, JSON.stringify(responseJSON));
+        } catch(error) {
+            throw error;
+        }
+    }
+    async deleteGopher(id: String, api: GopherApiSpec){
+        console.log(`Deleting gopher ${id}`);
+
+        try {
+            let response = await fetch(`${api.endpoint}/gopher?id=${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'x-api-key': api.apiKey,
+                    'Content-Type': 'application/json'
+                },
+            });
+            if (response.status != 200) {
+                let message = await(response.text())
+                throw `${response.status} - ${message}`;
+            }
+            let responseText = await response.text();
+            console.log('API response', response.status, JSON.stringify(responseText));
+        } catch(error) {
+            throw error;
+        }
+        
+    }
     async sendGopher(gopher: Gopher, method:string, api: GopherApiSpec) {
+
+        console.log(`Sending gopher ${gopher.id} - ${gopher.name}, method ${method}`);
+
         try {
             let response = await fetch(`${api.endpoint}/gopher`, {
                 method: method,
@@ -391,18 +441,20 @@ export default class GopherOperator extends Operator {
                 body: JSON.stringify(gopher),
               }
             );
+
             if (response.status != 200) {
-                throw new Error();
+                let message = await(response.text())
+                throw `${response.status} - ${message}`;
             }
             let responseJSON = await response.json();
-            console.log('API response', response.status, JSON.stringify(responseJSON));
+            console.log('API response', response.status, responseJSON);
         } catch(error) {
             throw error;
         }
     }
 }
 
-const operator = new GopherOperator();
+const operator = new GopherOperator(console);
 await operator.start();
 
 console.log('Operator started');
@@ -543,8 +595,6 @@ export default class GopherOperator extends Operator {
         }
         let tokenFile = currentUser.authProvider?.config.tokenFile;
         return fs.readFileSync(tokenFile).toString();
-        
-
     }
     async getGopherInfo(pod: string, namespace:string|any): Promise<Gopher> {
         // Preparing the credentials for K8s API

@@ -7,6 +7,7 @@ Operator that contacts K8s API to get the random-gopher pod's details
 import Operator, { ResourceEventType }  from './operator.js';
 import fetch from 'node-fetch';
 import https from 'node:https';
+import fs from 'node:fs';
 
 
 export default class GopherOperator extends Operator {

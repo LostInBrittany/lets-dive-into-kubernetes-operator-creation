@@ -13,6 +13,7 @@ import Operator, { ResourceEventType }  from './operator.js';
 import { KubernetesObject } from '@kubernetes/client-node';
 import fetch from 'node-fetch';
 import https from 'node:https';
+import fs from 'node:fs';
 
 
 export interface GopherApi extends KubernetesObject {

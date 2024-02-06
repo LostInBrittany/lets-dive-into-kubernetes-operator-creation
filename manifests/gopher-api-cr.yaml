@@ -3,5 +3,5 @@ kind: GopherAPI
 metadata:
   name: my-gopher-api
 spec:
-  endpoint: http://62.210.122.195:8080
-  apiKey: 9nwc6t0gib77wyglerfnd472y8sxb5
+  endpoint: https://app-e5ba2fe6-e750-4b34-b807-505c27a7e563.cleverapps.io
+  apiKey: t90xrhlu3j8gu02vyku6yfrr0ehalj
